@@ -16,7 +16,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:3000 (or whatever PORT is set to)
 
 ## Environment variables
 
@@ -27,8 +27,6 @@ Optional:
 - `OPENAI_MODEL` — default: `gpt-4o-mini`
 - `DATA_DIR` — default: `./data`
 - `SQLITE_PATH` — default: `${DATA_DIR}/app.sqlite`
-- `NEXT_PUBLIC_BASE_URL` — leave blank locally. On Railway you can set it to your app URL (helps server-side fetches).
-
 ## Deploy to Railway
 
 1. Create a new Railway project → **Deploy from GitHub** (or upload this zip into a new repo).

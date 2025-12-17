@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Card, CardContent, CardHeader, Button, Pill } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
 async function getData() {
-  const r = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/estimates`, { cache: "no-store" });
+  const h = headers();
+  const host = h.get("host");
+  const proto = (h.get("x-forwarded-proto") || "http").split(",")[0].trim();
+  const baseUrl = host ? `${proto}://${host}` : "";
+  const r = await fetch(`${baseUrl}/api/estimates`, { cache: "no-store" });
   if (!r.ok) return { items: [] as any[] };
   return r.json();
 }
