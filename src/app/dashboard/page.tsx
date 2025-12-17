@@ -1,21 +1,11 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { Card, CardContent, CardHeader, Button, Pill } from "@/components/ui";
+import { listEstimates } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-async function getData() {
-  const h = await headers();
-  const host = h.get("host");
-  const proto = (h.get("x-forwarded-proto") || "http").split(",")[0].trim();
-  const baseUrl = host ? `${proto}://${host}` : "";
-  const r = await fetch(`${baseUrl}/api/estimates`, { cache: "no-store" });
-  if (!r.ok) return { items: [] as any[] };
-  return r.json();
-}
-
 export default async function Dashboard() {
-  const data = await getData();
+  const items = listEstimates();
 
   return (
     <div className="space-y-6">
@@ -33,11 +23,11 @@ export default async function Dashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="font-semibold">Estimates</div>
-          <Pill>{data.items.length} total</Pill>
+          <Pill>{items.length} total</Pill>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y">
-            {data.items.map((it: any) => (
+            {items.map((it: any) => (
               <div key={it.id} className="p-4 flex items-center justify-between">
                 <div>
                   <div className="font-semibold">{it.title}</div>
@@ -48,7 +38,7 @@ export default async function Dashboard() {
                 <Link href={`/estimates/${it.id}`}><Button variant="secondary">Open</Button></Link>
               </div>
             ))}
-            {data.items.length === 0 && (
+            {items.length === 0 && (
               <div className="p-6 text-sm text-zinc-600">
                 No estimates yet. Create your first one.
               </div>

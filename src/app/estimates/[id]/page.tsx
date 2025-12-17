@@ -1,25 +1,14 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { Card, CardContent, CardHeader, Button, Pill } from "@/components/ui";
+import { getEstimate } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-
-async function getEstimate(id: string) {
-  const h = await headers();
-  const host = h.get("host");
-  const proto = (h.get("x-forwarded-proto") || "http").split(",")[0].trim();
-  const baseUrl = host ? `${proto}://${host}` : "";
-  const r = await fetch(`${baseUrl}/api/estimates/${id}`, { cache: "no-store" });
-  if (!r.ok) return null;
-  const j = await r.json();
-  return j.row as any;
-}
 
 export default async function EstimatePage(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const row = await getEstimate(id);
+  const row = getEstimate(id);
 
   if (!row) {
     return (
@@ -31,7 +20,6 @@ export default async function EstimatePage(
   }
 
   const customer = JSON.parse(row.customer_json);
-  const inputs = JSON.parse(row.inputs_json);
   const outputs = JSON.parse(row.outputs_json);
 
   return (
@@ -121,6 +109,24 @@ export default async function EstimatePage(
               ))}
             </tbody>
           </table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><div className="font-semibold">Permit / Code Guidance (Option A: safe + fast)</div></CardHeader>
+        <CardContent className="text-sm text-zinc-700 space-y-3">
+          <div className="space-y-1">
+            {(outputs.ahj?.guidance || []).map((g: string, i: number) => <div key={i}>• {g}</div>)}
+          </div>
+          <div className="pt-2">
+            <div className="font-semibold">Quick links</div>
+            <div className="flex flex-col gap-1 mt-1">
+              {(outputs.ahj?.searchLinks || []).map((l: any, i: number) => (
+                <a key={i} className="underline" href={l.url} target="_blank">{l.label}</a>
+              ))}
+            </div>
+          </div>
+          <div className="text-xs text-zinc-500">Always verify requirements with the local building department for the exact job address (AHJ).</div>
         </CardContent>
       </Card>
     </div>
