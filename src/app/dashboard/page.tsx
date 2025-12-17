@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, Button, Pill } from "@/components/ui";
 export const dynamic = "force-dynamic";
 
 async function getData() {
-  const h = headers();
+  const h = await headers();
   const host = h.get("host");
   const proto = (h.get("x-forwarded-proto") || "http").split(",")[0].trim();
   const baseUrl = host ? `${proto}://${host}` : "";
