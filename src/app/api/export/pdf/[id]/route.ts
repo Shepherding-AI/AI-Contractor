@@ -4,6 +4,8 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 
 export const runtime = "nodejs";
 
+type Params = Promise<{ id: string }>;
+
 function wrapText(text: string, maxLen: number) {
   const words = text.split(/\s+/);
   const lines: string[] = [];
@@ -19,11 +21,11 @@ function wrapText(text: string, maxLen: number) {
   return lines;
 }
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const row = getEstimate(params.id);
+export async function GET(_: Request, { params }: { params: Params }) {
+  const { id } = await params;
+  const row = getEstimate(id);
   if (!row) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  const inputs = JSON.parse(row.inputs_json);
   const outputs = JSON.parse(row.outputs_json);
 
   const pdf = await PDFDocument.create();
@@ -82,7 +84,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${row.title.replace(/[^a-z0-9\-\_ ]/gi, "").slice(0, 40) || "proposal"}.pdf"`
-    }
+      "Content-Disposition": `attachment; filename="${row.title.replace(/[^a-z0-9\-\_ ]/gi, "").slice(0, 40) || "proposal"}.pdf"`,
+    },
   });
 }
