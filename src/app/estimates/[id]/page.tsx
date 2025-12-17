@@ -10,8 +10,12 @@ async function getEstimate(id: string) {
   return j.row as any;
 }
 
-export default async function EstimatePage({ params }: { params: { id: string } }) {
-  const row = await getEstimate(params.id);
+export default async function EstimatePage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const row = await getEstimate(id);
+
   if (!row) {
     return (
       <div className="space-y-4">
@@ -112,24 +116,6 @@ export default async function EstimatePage({ params }: { params: { id: string } 
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><div className="font-semibold">Permit / Code Guidance (Option A: safe + fast)</div></CardHeader>
-        <CardContent className="text-sm text-zinc-700 space-y-3">
-          <div className="space-y-1">
-            {(outputs.ahj?.guidance || []).map((g: string, i: number) => <div key={i}>• {g}</div>)}
-          </div>
-          <div className="pt-2">
-            <div className="font-semibold">Quick links</div>
-            <div className="flex flex-col gap-1 mt-1">
-              {(outputs.ahj?.searchLinks || []).map((l: any, i: number) => (
-                <a key={i} className="underline" href={l.url} target="_blank">{l.label}</a>
-              ))}
-            </div>
-          </div>
-          <div className="text-xs text-zinc-500">Always verify requirements with the local building department for the exact job address (AHJ).</div>
         </CardContent>
       </Card>
     </div>
