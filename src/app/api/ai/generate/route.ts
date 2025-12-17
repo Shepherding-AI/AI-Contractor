@@ -10,8 +10,13 @@ const Schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const parsed = Schema.parse(body);
-  const outputs = await generateOutputs(parsed.inputs as Inputs);
-  return NextResponse.json({ outputs });
+  try {
+    const body = await req.json();
+    const parsed = Schema.parse(body);
+    const outputs = await generateOutputs(parsed.inputs as Inputs);
+    return NextResponse.json({ outputs });
+  } catch (e: any) {
+    const message = e?.message || "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

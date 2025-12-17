@@ -107,8 +107,8 @@ export default function NewEstimate() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ inputs: { ...inputs, zip: inputs.zip.trim(), trade: inputs.trade } })
       });
-      if (!r.ok) throw new Error("AI generate failed");
       const j = await r.json();
+      if (!r.ok) throw new Error(j?.error || "AI generate failed");
       setOutputs(j.outputs);
       setStep(5);
     } catch (e: any) {

@@ -42,3 +42,9 @@ Railway should detect Next.js and build automatically.
 
 - Code/permit guidance is **best-effort** and AHJ-dependent. Always confirm with the local building department.
 - Material pricing APIs are intentionally not included in V1 (manual line items + optional unit costs only).
+
+
+## Railway note (Next.js standalone)
+This app uses `output: 'standalone'`. Railway should run `npm start`, which is configured to execute:
+
+`node .next/standalone/server.js`

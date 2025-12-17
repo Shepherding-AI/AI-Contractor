@@ -41,9 +41,10 @@ export async function generateOutputs(inputs: Inputs): Promise<Outputs> {
     }
   };
 
-  const schemaHint = `Return JSON ONLY with keys: scopeOfWork (string), assumptions (string[]), exclusions (string[]), bom ({name:string,qty:number,unit?:string,notes?:string}[]), ahjGuidance (string[]).`;
+  const schemaHint = `You MUST return a single valid JSON object and nothing else. Return JSON ONLY with keys: scopeOfWork (string), assumptions (string[]), exclusions (string[]), bom ({name:string,qty:number,unit?:string,notes?:string}[]), ahjGuidance (string[]).`;
 
   const resp = await client.chat.completions.create({
+    response_format: { type: "json_object" },
     model: process.env.OPENAI_MODEL || "gpt-4o-mini",
     temperature: 0.3,
     messages: [
